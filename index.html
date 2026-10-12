@@ -59,12 +59,6 @@ body { background: radial-gradient(120% 70% at 50% 0%, #3a0b13, var(--night)); b
 
 .stage { position: relative; border: 2px solid var(--frame); border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 2px var(--frame-shadow); background: #000; }
 canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-width: 100%; }
-.letter-field { display: flex; align-items: center; gap: 10px; color: #ffe2dc; }
-.letter-field input {
-  width: 2.2em; height: 1.9em; text-align: center; font: inherit; font-size: 20px; color: var(--ink);
-  background: var(--frame-shadow); border: 2px solid var(--frame); border-radius: 6px; padding: 0;
-}
-.letter-field input:focus-visible { outline: none; border-color: var(--gold); }
 .intro {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 10px; padding: 12px; text-align: center; background: rgba(34, 5, 10, .66);
@@ -134,7 +128,6 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-w
       <span class="label">شخصٌ ما يقترب</span>
       <h1>لقاء ذي الرأس المربع</h1>
       <p>اهزمه خلال <span class="num">30</span> ثانية.</p>
-      <label class="letter-field" for="letter">حرف على رأسه <input id="letter" type="text" maxlength="2" placeholder="–" autocomplete="off" autocapitalize="characters" spellcheck="false" dir="auto"></label>
       <button class="btn begin" id="begin" type="button">ابدأ المعركة</button>
     </div>
   </div>
@@ -168,8 +161,7 @@ cv.width = W * S; cv.height = H * S;
 const GROUND = 104, PX = 196, EX0 = 140, EX1 = 166, LIMIT = 30, EMAX = 999;
 const K = 3, PXS = 208, GS = 238;
 const toScene = (x, y) => [PXS + K * (x - PX), GS + K * (y - GROUND)];
-let letter = '';
-try { letter = localStorage.getItem('shLetter') || ''; } catch (e) {}
+const letter = 'S';
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const $ = id => document.getElementById(id);
@@ -636,7 +628,7 @@ function draw() {
   scene();
   if (letter) {
     const [hx, hy] = toScene(ep.x, 47);
-    ctx.font = '700 48px "Reem Kufi", "Cairo", system-ui, sans-serif';
+    ctx.font = '700 48px "Cairo", system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillStyle = white ? '#0b0b0f' : '#ffffff';
     ctx.fillText(letter, hx, hy + 1);
@@ -801,14 +793,6 @@ $('begin').addEventListener('click', () => {
   startMusic();
   say('ظهر شخص بلا وجه! اهزمه خلال 30 ثانية.');
   cmds.attack.focus({ preventScroll: true });
-});
-const letterInput = $('letter');
-letterInput.value = letter;
-letterInput.addEventListener('input', () => {
-  const chars = [...letterInput.value.trim()];
-  letter = chars.length ? chars[chars.length - 1] : '';
-  letterInput.value = letter;
-  try { localStorage.setItem('shLetter', letter); } catch (e) {}
 });
 Object.entries(cmds).forEach(([k, b]) => b.addEventListener('click', () => act(k)));
 $('mute').addEventListener('click', e => {
