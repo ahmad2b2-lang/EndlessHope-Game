@@ -65,6 +65,13 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-w
 }
 .intro h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 8vw, 38px); line-height: 1.3; text-wrap: balance; }
 .intro p { margin: 0; color: #ffe2dc; max-width: 30ch; }
+.name-field { display: flex; align-items: center; gap: 10px; color: #ffe2dc; font-weight: 600; }
+.name-field input {
+  width: 9em; max-width: 52vw; height: 2.3em; text-align: center; font: inherit; font-size: 17px; color: var(--ink);
+  background: var(--frame-shadow); border: 2px solid var(--frame); border-radius: 8px; padding: 0 8px;
+}
+.name-field input::placeholder { color: #c98d93; }
+.name-field input:focus-visible { outline: none; border-color: var(--gold); }
 
 /* Gold game buttons: filled, outlined, with a pressable lip */
 .btn {
@@ -128,7 +135,8 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-w
       <span class="label">شخصٌ ما يقترب</span>
       <h1>لقاء ذي الرأس المربع</h1>
       <p>اهزمه خلال <span class="num">30</span> ثانية.</p>
-      <button class="btn begin" id="begin" type="button">ابدأ المعركة</button>
+      <label class="name-field" for="pname">اسمك <input id="pname" type="text" maxlength="12" placeholder="اكتب اسمك" autocomplete="off" spellcheck="false" dir="auto"></label>
+      <button class="btn begin" id="begin" type="button" disabled>ابدأ المعركة</button>
     </div>
   </div>
 
@@ -136,7 +144,7 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-w
 
   <div class="bottom">
     <div class="win status">
-      <div class="name">اللاعبة</div>
+      <div class="name" id="pnameShow">اللاعبة</div>
       <div class="row"><span class="label">الصحة</span><div class="bar"><i></i></div><span class="num" dir="ltr">48/48</span></div>
       <div class="row"><span class="label">الطاقة</span><div class="bar mp"><i id="mpBar"></i></div><span class="num" dir="ltr" id="mpText">12/12</span></div>
       <div class="row"><span class="label">الغرض</span><span>جرعة</span><span class="num" dir="ltr" id="potText">×3</span></div>
@@ -162,6 +170,7 @@ const GROUND = 104, PX = 196, EX0 = 140, EX1 = 166, LIMIT = 30, EMAX = 999;
 const K = 3, PXS = 208, GS = 238;
 const toScene = (x, y) => [PXS + K * (x - PX), GS + K * (y - GROUND)];
 const letter = 'S';
+let pname = 'اللاعبة';
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const $ = id => document.getElementById(id);
@@ -711,9 +720,9 @@ async function act(cmd) {
   let turn = true;
   if (cmd === 'attack') {
     setFace('shout', 900);
-    await say('اللاعبة تهاجم!'); if (st.ended) return;
+    await say(pname + ' تهاجم!'); if (st.ended) return;
     await tween(140, k => st.lunge = -14 * k);
-    st.fx.push({ type: 'slash', life: .4, max: .4 }); hit(rand(18, 27));
+    st.fx.push({ type: 'slash', life: .4, max: .4 }); hit(rand(54, 81));
     await tween(200, k => st.lunge = -14 * (1 - k));
     await wait(350); if (st.ended) return;
     setFace('worried', 1400);
@@ -721,9 +730,9 @@ async function act(cmd) {
   } else if (cmd === 'spark') {
     if (st.mp < 3) { await say('الطاقة لا تكفي.'); turn = false; }
     else {
-      st.mp -= 3; setFace('shout', 1300); await say('اللاعبة تُطلق الشرارة!'); if (st.ended) return;
+      st.mp -= 3; setFace('shout', 1300); await say(pname + ' تُطلق الشرارة!'); if (st.ended) return;
       st.fx.push({ type: 'spark', life: .5, max: .5 }); tone(1200, 0.3, 'sawtooth', 0.03, -1000);
-      await wait(250); if (st.ended) return; hit(rand(42, 58));
+      await wait(250); if (st.ended) return; hit(rand(126, 174));
       await wait(500); if (st.ended) return;
       setFace('shock', 1500);
       await say('الضوء يخترقه دون أن يؤذيه.');
@@ -731,7 +740,7 @@ async function act(cmd) {
   } else if (cmd === 'potion') {
     if (st.potions <= 0) { await say('لم يتبقَّ لديك أي جرعة.'); turn = false; }
     else {
-      st.potions--; setFace('happy', 2200); await say('اللاعبة تشرب جرعة.'); if (st.ended) return;
+      st.potions--; setFace('happy', 2200); await say(pname + ' تشرب جرعة.'); if (st.ended) return;
       st.fx.push({ type: 'heal', life: .7, max: .7 }); tone(520, 0.2, 'triangle', 0.04, 300);
       const [hx, hy] = toScene(PX, 64);
       st.floats.push({ text: '+0', x: hx, y: hy, life: 1, color: '#9cf5b8' });
@@ -740,7 +749,7 @@ async function act(cmd) {
     }
   } else if (cmd === 'run') {
     setFace('scared', 1000);
-    await say('اللاعبة تحاول الهرب!'); if (st.ended) return;
+    await say(pname + ' تحاول الهرب!'); if (st.ended) return;
     await wait(400); if (st.ended) return;
     setFace('shock', 1600);
     await say('قدماها لا تتحركان!');
@@ -782,11 +791,17 @@ async function startEnding() {
 function reset() {
   clearInterval(typeTimer);
   st = fresh(); lastShown = '';
-  intro.hidden = false; blank.classList.remove('show'); blank.hidden = true;
+  intro.hidden = false; blank.classList.remove('show'); blank.hidden = true; pname = 'اللاعبة'; $('pnameShow').textContent = pname;
   msgEl.textContent = 'اضغط «ابدأ المعركة» للبدء.'; updateButtons();
 }
 
-$('begin').addEventListener('click', () => {
+const nameInput = $('pname'), beginBtn = $('begin');
+nameInput.addEventListener('input', () => { beginBtn.disabled = !nameInput.value.trim(); });
+nameInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !beginBtn.disabled) beginBtn.click(); });
+beginBtn.addEventListener('click', () => {
+  const n = nameInput.value.trim();
+  if (!n) { nameInput.focus(); return; }
+  pname = n; $('pnameShow').textContent = n;
   initAudio();
   st.phase = 'battle'; st.t = 0; st.lastSec = 0; intro.hidden = true;
   st.busy = false; updateButtons();
