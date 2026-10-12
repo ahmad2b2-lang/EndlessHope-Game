@@ -8,15 +8,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=DotGothic16&family=Reem+Kufi:wght@500;700&display=swap">
 <style>
-/* Layout: one-screen RPG battle in crimson — timer + foe + sound on top, square stage, message box, status + big gold command buttons below. Single dark-red look by choice. */
+/* Layout: one-screen RPG battle in blue — timer + foe + sound on top, square stage, message box, status + big gold command buttons below. Single dark-blue look by choice. */
 :root {
-  --night: #1c0609;
-  --win-top: #7a1626;
-  --win-bot: #480a15;
-  --frame: #fbe9e3;
-  --frame-shadow: #12030a;
-  --ink: #fff4f0;
-  --muted: #f3b9bb;
+  --night: #050d1c;
+  --win-top: #1f4f9a;
+  --win-bot: #0e2a56;
+  --frame: #e8f2ff;
+  --frame-shadow: #030a18;
+  --ink: #f2f8ff;
+  --muted: #a9c8ee;
   --hp: #6fe09a;
   --mp: #7cc0ff;
   --urgent: #ffd166;
@@ -31,7 +31,7 @@
   color-scheme: dark;
 }
 html, body { height: 100%; }
-body { background: radial-gradient(120% 70% at 50% 0%, #3a0b13, var(--night)); background-color: var(--night); color: var(--ink); font-family: var(--font-body); }
+body { background: radial-gradient(120% 70% at 50% 0%, #0f2d5c, var(--night)); background-color: var(--night); color: var(--ink); font-family: var(--font-body); }
 .num { font-family: var(--font-num); }
 .app {
   box-sizing: border-box; max-width: 560px; min-height: 100%; margin: 0 auto;
@@ -52,7 +52,7 @@ body { background: radial-gradient(120% 70% at 50% 0%, #3a0b13, var(--night)); b
 @keyframes pulse { 50% { opacity: .45; } }
 .foe { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
 .foe-name { font-family: var(--font-num); font-size: 17px; }
-.bar { height: 7px; background: var(--frame-shadow); border: 1px solid #a34552; border-radius: 3px; overflow: hidden; }
+.bar { height: 7px; background: var(--frame-shadow); border: 1px solid #4a7ab4; border-radius: 3px; overflow: hidden; }
 .bar > i { display: block; height: 100%; width: 100%; background: var(--hp); }
 .bar.mp > i { background: var(--mp); }
 .row { display: grid; grid-template-columns: 2.8em 1fr auto; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
@@ -61,16 +61,16 @@ body { background: radial-gradient(120% 70% at 50% 0%, #3a0b13, var(--night)); b
 canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-width: 100%; }
 .intro {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 10px; padding: 12px; text-align: center; background: rgba(34, 5, 10, .66);
+  gap: 10px; padding: 12px; text-align: center; background: rgba(4, 12, 30, .66);
 }
 .intro h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 8vw, 38px); line-height: 1.3; text-wrap: balance; }
-.intro p { margin: 0; color: #ffe2dc; max-width: 30ch; }
-.name-field { display: flex; align-items: center; gap: 10px; color: #ffe2dc; font-weight: 600; }
+.intro p { margin: 0; color: #d4e6ff; max-width: 30ch; }
+.name-field { display: flex; align-items: center; gap: 10px; color: #d4e6ff; font-weight: 600; }
 .name-field input {
   width: 9em; max-width: 52vw; height: 2.3em; text-align: center; font: inherit; font-size: 17px; color: var(--ink);
   background: var(--frame-shadow); border: 2px solid var(--frame); border-radius: 8px; padding: 0 8px;
 }
-.name-field input::placeholder { color: #c98d93; }
+.name-field input::placeholder { color: #8fb0d8; }
 .name-field input:focus-visible { outline: none; border-color: var(--gold); }
 
 /* Gold game buttons: filled, outlined, with a pressable lip */
@@ -110,7 +110,7 @@ canvas { display: block; width: 100%; height: auto; aspect-ratio: 20 / 21; max-w
 .blank.show { opacity: 1; }
 .blank img {
   display: block; max-width: min(420px, 100%); max-height: 100%; width: auto; height: auto; object-fit: contain;
-  border-radius: 14px; box-shadow: 0 10px 40px rgba(40, 8, 14, .25);
+  border-radius: 14px; box-shadow: 0 10px 40px rgba(8, 20, 50, .25);
   opacity: 0; transform: translateY(12px) scale(.97); transition: opacity 1.6s ease, transform 1.6s ease;
 }
 .blank.reveal img { opacity: 1; transform: none; }
@@ -179,7 +179,7 @@ const mpBar = $('mpBar'), mpText = $('mpText'), potText = $('potText'), intro = 
 const cmds = { attack: $('c-attack'), spark: $('c-spark'), potion: $('c-potion'), run: $('c-run') };
 
 const fresh = () => ({ phase: 'title', t: 0, hp: EMAX, hpShown: EMAX, mp: 12, potions: 3, busy: true, ended: false,
-  lunge: 0, flash: 0, shake: 0, floats: [], fx: [], face: null, faceUntil: 0, bubbleK: 0, pose: 'idle', patY: 55, dip: 0, paper: null, holdPaper: false, lastSec: 0 });
+  lunge: 0, flash: 0, shake: 0, floats: [], fx: [], face: null, faceUntil: 0, bubbleK: 0, pose: 'idle', patY: 50, dip: 0, paper: null, holdPaper: false, lastSec: 0 });
 let st = fresh();
 let canRestart = false, typeTimer = null, lastShown = '';
 
@@ -358,7 +358,7 @@ const PAL = {
   skin: '#ffdcc6', skinSh: '#f2b9a0', hair: '#5a2f24', hairHi: '#8a4f3c', brow: '#3b1d17',
   red: '#e0313f', redHi: '#ff6a72', redDk: '#a5172a', white: '#ffffff', frill: '#fff3f1',
   shoe: '#7a1424', gold: '#f2bf3c', blade: '#eef3f7', eye: '#2a1626', iris: '#9b3e58',
-  mouth: '#8f1f33', tongue: '#ff8a96', blush: 'rgba(255,120,130,.45)', blushHot: 'rgba(255,80,100,.7)', sweat: '#b5e4ff',
+  mouth: '#8f1f33', tongue: '#ff8a96', blush: 'rgba(255,120,130,.28)', blushHot: 'rgba(255,90,105,.5)', sweat: '#b5e4ff',
   out: '#3b1520'
 };
 
@@ -455,77 +455,84 @@ function drawFace(x, face) {
 }
 
 function drawPlayer(x, dip) {
-  const P = PAL;
+  const P = PAL, HX = x - 0.8, HY = 63;           // head centre
   ctx.save();
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
 
-  // ponytail (behind)
+  // long hair behind the body
   ctx.save(); ctx.translate(0, dip);
-  blob(P.hair, () => { ctx.moveTo(x + 4.5, 63.5); ctx.bezierCurveTo(x + 12.5, 64, x + 12.5, 77, x + 10.2, 87); ctx.bezierCurveTo(x + 9.2, 80, x + 7.2, 74.5, x + 4.2, 72.5); ctx.closePath(); });
-  pen(P.hairHi, 0.45, () => { ctx.moveTo(x + 7.5, 66); ctx.quadraticCurveTo(x + 10.3, 72, x + 10, 80); });
+  blob(P.hair, () => {
+    ctx.moveTo(x - 6.2, 61);
+    ctx.bezierCurveTo(x - 7.6, 70, x - 6.4, 80, x - 4.2, 86);
+    ctx.quadraticCurveTo(x, 88, x + 4.6, 86.2);
+    ctx.bezierCurveTo(x + 8.4, 78, x + 8.2, 66, x + 6.2, 59.5);
+    ctx.closePath();
+  });
+  pen(P.hairHi, 0.5, () => { ctx.moveTo(x + 5.6, 63); ctx.quadraticCurveTo(x + 7.2, 74, x + 4.6, 84); });
   ctx.restore();
 
   // back arm
-  limb(x + 3.6, 79, x + 5.2, 85.5, 1.7, P.skin);
-  blob(P.red, () => ell(x + 3.8, 78.5, 2.1, 1.7));
+  limb(x + 3.4, 72, x + 4.9, 80.5, 1.5, P.skin);
+  blob(P.skin, () => ell(x + 5, 81.2, 1, 1), 0.35);
 
-  // legs, socks, shoes
-  limb(x - 2.2, 95, x - 2.5, 101.6, 1.8, P.skin);
-  limb(x + 1.9, 95, x + 2.1, 101.6, 1.8, P.skin);
-  pen(P.white, 1.8, () => { ctx.moveTo(x - 2.45, 99.6); ctx.lineTo(x - 2.5, 101.6); ctx.moveTo(x + 2.05, 99.6); ctx.lineTo(x + 2.1, 101.6); });
-  blob(P.shoe, () => ell(x - 3.3, 102.9, 2.4, 1.3));
-  blob(P.shoe, () => ell(x + 1.5, 102.9, 2.4, 1.3));
+  // legs, heels
+  limb(x - 2, 91, x - 2.3, 101.8, 1.7, P.skin);
+  limb(x + 1.9, 91, x + 2.1, 101.8, 1.7, P.skin);
+  blob(P.shoe, () => { ell(x - 3, 102.9, 2.3, 1.05); ell(x + 1.3, 102.9, 2.3, 1.05); });
 
-  // skirt with frill
-  blob(P.red, () => { ctx.moveTo(x - 4, 84); ctx.lineTo(x + 4, 84); ctx.quadraticCurveTo(x + 7, 90, x + 8.6, 96.4); ctx.lineTo(x - 8.6, 96.4); ctx.quadraticCurveTo(x - 7, 90, x - 4, 84); ctx.closePath(); });
-  pen(P.redHi, 0.6, () => { ctx.moveTo(x - 1.8, 86); ctx.quadraticCurveTo(x - 3.2, 90, x - 4.2, 95); });
-  pen(P.redDk, 0.5, () => { ctx.moveTo(x + 2.2, 87); ctx.quadraticCurveTo(x + 3.6, 91, x + 4.6, 95.4); });
-  blob(P.frill, () => { for (let k = 0; k < 6; k++) { const cx = x - 7.15 + k * 2.86; ctx.moveTo(cx + 1.43, 96.2); ctx.arc(cx, 96.2, 1.43, 0, Math.PI); } }, 0.35);
-
-  // bodice, belt, collar, bow
-  blob(P.red, () => rrect(x - 4, 76.3, 8, 9, 2.2));
-  pen(P.redDk, 0.9, () => { ctx.moveTo(x - 3.7, 84.2); ctx.lineTo(x + 3.7, 84.2); });
-  blob(P.white, () => { ctx.moveTo(x - 3.6, 76.6); ctx.quadraticCurveTo(x - 2.4, 79.6, x, 77.5); ctx.quadraticCurveTo(x + 2.4, 79.6, x + 3.6, 76.6); ctx.closePath(); }, 0.35);
-  blob(P.redDk, () => { ell(x - 1.1, 78.5, 1, 0.65, -0.3); ell(x + 1.1, 78.5, 1, 0.65, 0.3); }, 0.25);
-  blob(P.red, () => ell(x, 78.5, 0.45, 0.45), 0.25);
-
-  // head
-  ctx.save(); ctx.translate(0, dip);
-  blob(P.hair, () => ell(x + 0.6, 69.4, 8.3, 8.4));
-  blob(P.skin, () => ell(x - 0.8, 71.3, 6.6, 6.1), 0.4);
-  blob(P.hair, () => {
-    ctx.moveTo(x - 7.6, 70.4);
-    ctx.bezierCurveTo(x - 7.9, 63, x - 2, 60.8, x + 1, 61);
-    ctx.bezierCurveTo(x + 6, 61.2, x + 8.8, 64.6, x + 7.8, 69.5);
-    ctx.quadraticCurveTo(x + 6.4, 67.4, x + 5.2, 66.6);
-    ctx.quadraticCurveTo(x + 4.2, 67.6, x + 3.2, 67.6);
-    ctx.quadraticCurveTo(x + 2.4, 66.2, x + 1.4, 65.6);
-    ctx.quadraticCurveTo(x + 0.4, 67.2, x - 0.8, 67.4);
-    ctx.quadraticCurveTo(x - 1.8, 66, x - 2.6, 65.6);
-    ctx.quadraticCurveTo(x - 3.8, 67.4, x - 5, 67.6);
-    ctx.quadraticCurveTo(x - 5.6, 66.6, x - 6, 66.3);
+  // fitted knee-length dress
+  blob(P.red, () => {
+    ctx.moveTo(x - 3.6, 70.6); ctx.lineTo(x + 3.6, 70.6);
+    ctx.quadraticCurveTo(x + 3.9, 75.5, x + 2.8, 79.6);
+    ctx.quadraticCurveTo(x + 5.2, 84, x + 6.9, 92.2);
+    ctx.lineTo(x - 6.9, 92.2);
+    ctx.quadraticCurveTo(x - 5.2, 84, x - 2.8, 79.6);
+    ctx.quadraticCurveTo(x - 3.9, 75.5, x - 3.6, 70.6);
     ctx.closePath();
   });
-  blob(P.hair, () => { ctx.moveTo(x - 7.6, 68); ctx.quadraticCurveTo(x - 8.9, 74, x - 7.3, 79); ctx.quadraticCurveTo(x - 6.3, 74, x - 5.8, 69); ctx.closePath(); });
-  pen('rgba(255,255,255,.35)', 0.7, () => ctx.arc(x + 0.6, 69.4, 6.6, -2.5, -1.7));
+  pen(P.redHi, 0.6, () => { ctx.moveTo(x - 1.6, 81.5); ctx.quadraticCurveTo(x - 3.2, 86, x - 4.4, 91); });
+  pen(P.redDk, 0.5, () => { ctx.moveTo(x + 2, 82); ctx.quadraticCurveTo(x + 3.6, 86.5, x + 4.9, 91); });
+  pen(P.redDk, 0.7, () => { ctx.moveTo(x - 6.8, 91.6); ctx.lineTo(x + 6.8, 91.6); });
+  pen(P.gold, 1, () => { ctx.moveTo(x - 2.9, 79.7); ctx.lineTo(x + 2.9, 79.7); });          // belt
+  blob(P.skin, () => { ctx.moveTo(x - 1.9, 70.6); ctx.lineTo(x + 1.9, 70.6); ctx.lineTo(x, 74.6); ctx.closePath(); }, 0.3); // V-neck
+  blob(P.red, () => ell(x - 3.6, 72, 1.7, 1.4), 0.3);
+  blob(P.red, () => ell(x + 3.6, 72, 1.7, 1.4), 0.3);
+
+  // neck, head
+  ctx.save(); ctx.translate(0, dip);
+  blob(P.skin, () => rrect(x - 1.5, 67.5, 2.6, 3.4, 1), 0.3);
+  blob(P.skin, () => ell(HX, HY, 4.9, 5.7), 0.4);
+  // face features, scaled down for adult proportions
+  ctx.save();
+  ctx.translate(HX, HY); ctx.scale(0.8, 0.8); ctx.translate(-(x - 0.8), -71.3);
   drawFace(x, currentFace());
-  blob(P.red, () => ell(x + 2.3, 61.3, 2.5, 1.55, -0.45));
-  blob(P.red, () => ell(x + 6.5, 61.6, 2.5, 1.55, 0.45));
-  blob(P.redDk, () => ell(x + 4.4, 61.6, 1, 1));
+  ctx.restore();
+  // side-swept fringe and crown
+  blob(P.hair, () => {
+    ctx.moveTo(x - 6, 63);
+    ctx.bezierCurveTo(x - 7.4, 55.4, x - 1.6, 53.4, x + 1.2, 53.8);
+    ctx.bezierCurveTo(x + 6.2, 54.4, x + 7, 58.6, x + 5.6, 63.6);
+    ctx.quadraticCurveTo(x + 4.6, 59.8, x + 1.2, 58.2);
+    ctx.quadraticCurveTo(x - 1.6, 58.6, x - 4.9, 60.6);
+    ctx.quadraticCurveTo(x - 5.6, 61.6, x - 6, 63);
+    ctx.closePath();
+  });
+  blob(P.hair, () => { ctx.moveTo(x - 6, 60); ctx.quadraticCurveTo(x - 7.4, 68, x - 5.4, 75); ctx.quadraticCurveTo(x - 4.8, 68, x - 4.9, 61); ctx.closePath(); });
+  pen('rgba(255,255,255,.35)', 0.6, () => ctx.arc(x + 0.8, 62, 6.2, -2.4, -1.7));
+  blob(P.gold, () => ell(x + 4.4, 57, 0.9, 0.9), 0.3);                                  // small hair clip
   ctx.restore();
 
   // front arm: sword, or reaching for the paper
   if (st.holdPaper) {
-    limb(x - 3.5, 79, x - 8.4, 81, 1.7, P.skin);
-    blob(P.skin, () => ell(x - 8.6, 81, 1.15, 1.15), 0.4);
+    limb(x - 3.4, 72, x - 8.6, 79.6, 1.5, P.skin);
+    blob(P.skin, () => ell(x - 8.9, 80, 1, 1), 0.35);
   } else {
-    limb(x - 8, 83, x - 19.5, 76.6, 1.1, P.blade);
-    pen('#a9b8c6', 0.35, () => { ctx.moveTo(x - 9, 83); ctx.lineTo(x - 19, 77.2); });
-    limb(x - 8.6, 81.3, x - 7.2, 84.7, 0.8, P.gold);
-    limb(x - 3.5, 79, x - 6.8, 83.1, 1.7, P.skin);
-    blob(P.skin, () => ell(x - 7.3, 83.2, 1.2, 1.2), 0.4);
+    limb(x - 8.2, 78.4, x - 19.5, 71.8, 1.1, P.blade);
+    pen('#a9b8c6', 0.35, () => { ctx.moveTo(x - 9.2, 78.4); ctx.lineTo(x - 19, 72.4); });
+    limb(x - 8.8, 76.6, x - 7.4, 80, 0.8, P.gold);
+    limb(x - 3.4, 72, x - 7, 78.6, 1.5, P.skin);
+    blob(P.skin, () => ell(x - 7.6, 78.8, 1.1, 1.1), 0.35);
   }
-  blob(P.red, () => ell(x - 3.6, 78.5, 2.1, 1.7));
   ctx.restore();
 }
 
@@ -536,7 +543,7 @@ function drawEnemy(p, white) {
   line(x, 88, x - p.spr, GROUND, c); line(x, 88, x + p.spr, GROUND, c);
   line(x, 67, x - 4 - p.sw, 84, c);
   if (st.pose === 'pat') {
-    line(x, 67, x + 17, 61, c); line(x + 17, 61, PX - 1, st.patY, c); rect(PX - 2, st.patY - 1, 3, 2, c);
+    line(x, 67, x + 17, 56, c); line(x + 17, 56, PX - 1, st.patY, c); rect(PX - 2, st.patY - 1, 3, 2, c);
   } else if (st.pose === 'give') {
     line(x, 67, x + 6, 77, c); line(x + 6, 77, x + 11, 80, c); rect(x + 10, 79, 2, 2, c);
   } else {
@@ -594,15 +601,15 @@ function draw() {
   const sprite = () => ctx.setTransform(S * K, 0, 0, S * K, S * (PXS - K * PX + sh), S * (GS - K * GROUND));
 
   scene();
-  const skyTop = ['#e7967f', '#4a1830'], skyBot = ['#fbd9c0', '#a8455a'];
+  const skyTop = ['#78b0ec', '#0f1f4a'], skyBot = ['#d9edff', '#4a6cae'];
   const top = toHex(mix(skyTop[0], skyTop[1], tt)), bot = toHex(mix(skyBot[0], skyBot[1], tt));
   for (let b = 0; b < 34; b++) rect(0, b * 6, W, 6, mix(top, bot, b / 33));
-  const far = mix('#c48a86', '#5a2638', tt), near = mix('#9a6e6a', '#3e1a2c', tt);
+  const far = mix('#8fb0d8', '#24406e', tt), near = mix('#6c92be', '#192e56', tt);
   for (let i = 0; i < W; i++) { rect(i, farH[i], 1, 202 - farH[i], far); rect(i, nearH[i], 1, 202 - nearH[i], near); }
-  rect(0, 200, W, 52, mix('#7f8a5c', '#4f4a3c', tt));
-  rect(0, 200, W, 2, mix('#97a06c', '#5f5844', tt));
-  rect(0, 244, W, 8, mix('#6e774f', '#423c31', tt));
-  const tuft = mix('#616b45', '#3a3529', tt);
+  rect(0, 200, W, 52, mix('#6d9a74', '#2c4d48', tt));
+  rect(0, 200, W, 2, mix('#86b088', '#3c625a', tt));
+  rect(0, 244, W, 8, mix('#5d8765', '#243f3c', tt));
+  const tuft = mix('#52805c', '#1e3836', tt);
   for (const g of tufts) { rect(g.x, g.y, 1, 2, tuft); rect(g.x + 2, g.y - 1, 1, 3, tuft); rect(g.x + 4, g.y, 1, 2, tuft); }
 
   const ep = enemyPos(st.t);
@@ -624,7 +631,7 @@ function draw() {
       const n = Math.min(1, p * 2.5);
       ctx.globalAlpha = 1 - p;
       line(ep.x - 15, 38, ep.x - 15 + 30 * n, 38 + 40 * n, '#ffffff');
-      line(ep.x - 11, 36, ep.x - 11 + 30 * n, 36 + 40 * n, '#ffe1e1');
+      line(ep.x - 11, 36, ep.x - 11 + 30 * n, 36 + 40 * n, '#dcecff');
       ctx.globalAlpha = 1;
     } else if (f.type === 'spark') {
       let x = ep.x + rand(-8, 8), y = 24;
@@ -767,11 +774,11 @@ async function startEnding() {
   setFace('shock');
   await wait(250);
   await say('لقد وصل الشخص إليك.'); await wait(900);
-  st.pose = 'pat'; st.patY = 55; setFace('fluster'); say('يربّت على رأسك.');
+  st.pose = 'pat'; st.patY = 50; setFace('fluster'); say('يربّت على رأسك.');
   let wasDown = false;
   await tween(2600, k => {
-    st.patY = 55 + Math.round(5 * Math.abs(Math.sin(k * Math.PI * 3)));
-    const down = st.patY >= 59; st.dip = down ? 1 : 0;
+    st.patY = 50 + Math.round(5 * Math.abs(Math.sin(k * Math.PI * 3)));
+    const down = st.patY >= 54; st.dip = down ? 1 : 0;
     if (down && !wasDown) tone(520, 0.08, 'triangle', 0.05);
     wasDown = down;
   });
